@@ -1,0 +1,41 @@
+services:
+  keycloak:
+#    build:
+#      context: .
+#    image: custom-keycloak:latest
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: 123456
+    ports:
+      - 9090:8080
+    volumes:
+      - ./keycloak-init:/opt/keycloak-init/ # Add a folder for the initialization scripts
+    entrypoint:
+      - /bin/bash
+      - -c
+      - >
+       chmod +x /opt/keycloak-init/configure-keycloak.sh && 
+       echo "Iniciando o Keycloak..." && 
+       /opt/keycloak/bin/kc.sh start-dev
+#         &
+#       echo "Aguardando Keycloak iniciar..." &&
+#       sleep 30 &&
+#       echo "Executando script configure-keycloak.sh..." &&
+#       /opt/keycloak-init/configure-keycloak.sh
+  db:
+    image: postgres:15.5
+    restart: always
+    ports:
+      - "5434:5434"
+    environment:
+      POSTGRES_DB: public
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
+    expose:
+      - "5434"
+    command: -p 5434
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d/

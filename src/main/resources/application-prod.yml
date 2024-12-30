@@ -1,0 +1,77 @@
+# SERVER
+server:
+  port: 8081
+  servlet:
+    context-path: /order/
+# SERVER - END
+
+# SPRING
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+#  profiles:
+#    active: prod
+#  main:
+#  lazy-initialization: true
+#    web-application-type: servlet
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    url: jdbc:postgresql://localhost:5434/order
+    username: root
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 1                        # minimo de conexões abertas
+      maximum-pool-size: 10                  # maximo de conexões abertas
+      idle-timeout: 5                        # 5 minutos
+      connection-timeout: 30000                 # 30 segundos
+      leak-detection-threshold: 2            # 2 segundos
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+#  # SPRING - END
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/avaliacao
+
+# MANAGEMENT - DONT REMOVE
+management:
+  endpoint:
+    health:
+      show-details: never
+      cache:
+        time-to-live: "30s"
+    metrics:
+      access: read_only
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+# MANAGEMENT - END
+
+# SPRING DOC - BEGIN
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    configUrl: /order/v3/api-docs/swagger-config
+    disable-swagger-default-url: true
+    url: /order/v3/api-docs
+    enabled: true
+    path: /swagger-ui.html
+  show-actuator: true
+# SPRING DOC - END
+
+
+
+logging:
+  level:
+    org.flywaydb: DEBUG
+    org.springframework.boot.autoconfigure.flyway: DEBUG
