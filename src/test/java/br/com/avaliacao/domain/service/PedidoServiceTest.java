@@ -9,11 +9,13 @@ import br.com.avaliacao.domain.repository.PedidoRepository;
 import br.com.avaliacao.domain.repository.ProdutoRepository;
 import br.com.avaliacao.support.exception.NegocioException;
 import br.com.avaliacao.support.util.CpfUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,6 +42,18 @@ public class PedidoServiceTest {
 
     @Mock
     private ProdutoRepository produtoRepository;
+
+    private MockedStatic<CpfUtil> mockedCpfUtil;
+
+    @BeforeEach
+    void setupMockStatic() {
+        mockedCpfUtil = mockStatic(CpfUtil.class);
+    }
+
+    @AfterEach
+    void tearDownMockStatic() {
+        mockedCpfUtil.close();
+    }
 
     @Test
     void dadoDataDeCorteNula_quandoObterTodos_entaoRetornaTodosPedidos() {
@@ -100,36 +114,56 @@ public class PedidoServiceTest {
 
         when(pedidoRepository.findPedidoById(pedido.getId())).thenReturn(Optional.empty());
         when(produtoRepository.findById(produto.getId())).thenReturn(Optional.of(produto));
-        mockStatic(CpfUtil.class).when(() -> CpfUtil.isValidCPF(pedido.getCpfCliente())).thenReturn(true);
+        mockedCpfUtil.when(() -> CpfUtil.isValidCPF(pedido.getCpfCliente())).thenReturn(true);
 
+        // Chamada do método que será testado
         pedidoService.criarPedido(pedido);
 
+        // Verificar se o pedido foi salvo corretamente
         verify(pedidoRepository, times(1)).save(pedido);
     }
 
     @Test
     void dadoPedidoComCpfInvalido_quandoCriarPedido_entaoLancaExcecao() {
         Pedido pedido = new Pedido();
-        pedido.setCpfCliente("invalid");
+        pedido.setCpfCliente("cpf_invalido"); // CPF deliberadamente inválido
 
-        mockStatic(CpfUtil.class).when(() -> CpfUtil.isValidCPF(pedido.getCpfCliente())).thenReturn(false);
+        // Configurando o comportamento do mock global
+        mockedCpfUtil.when(() -> CpfUtil.isValidCPF(pedido.getCpfCliente()))
+                .thenReturn(false);
 
-        assertThrows(NegocioException.class, () -> pedidoService.criarPedido(pedido));
+        // Act & Assert: Verifica se lançar a exceção é o comportamento esperado
+        NegocioException exception = assertThrows(NegocioException.class, () -> pedidoService.criarPedido(pedido));
+
+        // Verifica se a mensagem da exceção está correta
+        assertEquals("CPF inválido", exception.getMessage());
     }
 
     @Test
     void dadoProdutoInexistente_quandoAdicionarItem_entaoLancaExcecao() {
+        Long pedidoId = 1L;
         Produto produto = new Produto();
         produto.setId(1L);
+
         ItemPedido itemPedido = new ItemPedido();
         itemPedido.setProduto(produto);
 
+        Pedido pedido = new Pedido();
+        pedido.setId(pedidoId);
+
+        // Mock do pedido existente
+        when(pedidoRepository.findPedidoById(pedidoId)).thenReturn(Optional.of(pedido));
+
+        // Mock do produto inexistente
         when(produtoRepository.findById(produto.getId())).thenReturn(Optional.empty());
 
+        // Act & Assert: Verifica se a exceção esperada é lançada
         NegocioException exception = assertThrows(NegocioException.class,
-                () -> pedidoService.adicionarItem(1L, itemPedido));
+                () -> pedidoService.adicionarItem(pedidoId, itemPedido));
 
-        assertEquals("Produto não encontrado", exception.getMessage());
+        // Assert: Mensagem da exceção e interações com os mocks
+        assertEquals(String.format("Produto %s não existe", produto.getId()), exception.getMessage());
+        verify(pedidoRepository, times(1)).findPedidoById(pedidoId);
         verify(produtoRepository, times(1)).findById(produto.getId());
         verifyNoInteractions(itemPedidoRepository);
     }

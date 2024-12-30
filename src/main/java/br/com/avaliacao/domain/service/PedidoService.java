@@ -47,9 +47,11 @@ public class PedidoService {
         validarExistenciaPedido(pedido.getId());
         validarCpfCliente(pedido.getCpfCliente());
 
-        for(ItemPedido item : pedido.getItens()){
-            item.setPedido(pedido);
-            validarExistenciaProduto(item.getProduto());
+        if(pedido.getItens() != null) {
+            for (ItemPedido item : pedido.getItens()) {
+                item.setPedido(pedido);
+                validarExistenciaProduto(item.getProduto());
+            }
         }
         pedidoRepository.save(pedido);
     }
