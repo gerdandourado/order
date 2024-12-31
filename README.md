@@ -24,6 +24,7 @@ Este projeto implementa uma API REST para o gerenciamento de pedidos utilizando 
 7. **Autenticação e Autorização**:
     - Configuração de segurança integrada ao Keycloak com controle baseado em roles.
 
+
 ## **Frameworks Utilizados**
 1. **Spring Boot**:
     - Framework principal do projeto.
