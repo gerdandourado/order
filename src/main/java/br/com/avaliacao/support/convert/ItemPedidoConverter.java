@@ -15,6 +15,9 @@ public class ItemPedidoConverter {
     }
 
     public ItemPedidoDTO toDTO(ItemPedido itemPedido){
-        return new ItemPedidoDTO(itemPedido.getProduto().getId(), itemPedido.getQuantidade(), itemPedido.getValorUnitario());
+        return new ItemPedidoDTO(itemPedido.getProduto().getId(),
+                itemPedido.getProduto().getDescricao(),
+                itemPedido.getQuantidade(),
+                itemPedido.getValorUnitario());
     }
 }
