@@ -14,14 +14,20 @@ class PedidoTest {
 
     @Test
     void dadoItensValidos_quandoGetValorTotal_entaoRetornaSomaDosValoresTotais() {
-        ItemPedido item1 = ItemPedido.builder().valorUnitario(new BigDecimal("10.50")).quantidade(new BigDecimal("2")).build();
-        ItemPedido item2 = ItemPedido.builder().valorUnitario(new BigDecimal("5.00")).quantidade(new BigDecimal("3")).build();
+        ItemPedido item1 = ItemPedido.builder()
+                .valorUnitario(new BigDecimal("12.30"))
+                .quantidade(new BigDecimal("3"))
+                .build();
+        ItemPedido item2 = ItemPedido.builder()
+                .valorUnitario(new BigDecimal("7.50"))
+                .quantidade(new BigDecimal("4"))
+                .build();
 
         Pedido pedido = Pedido.builder().itens(List.of(item1, item2)).build();
 
         BigDecimal resultado = pedido.getValorTotal();
 
-        assertEquals(new BigDecimal("36.50"), resultado);
+        assertEquals(new BigDecimal("66.90"), resultado);
     }
 
     @Test
@@ -35,13 +41,19 @@ class PedidoTest {
 
     @Test
     void dadoItensComValorZero_quandoGetValorTotal_entaoRetornaZero() {
-        ItemPedido item1 = ItemPedido.builder().valorUnitario(BigDecimal.ZERO).quantidade(new BigDecimal("2")).build();
-        ItemPedido item2 = ItemPedido.builder().valorUnitario(new BigDecimal("5.00")).quantidade(BigDecimal.ZERO).build();
+        ItemPedido item1 = ItemPedido.builder()
+                .valorUnitario(BigDecimal.ZERO)
+                .quantidade(new BigDecimal("10"))
+                .build();
+        ItemPedido item2 = ItemPedido.builder()
+                .valorUnitario(new BigDecimal("0.00"))
+                .quantidade(new BigDecimal("5"))
+                .build();
 
         Pedido pedido = Pedido.builder().itens(List.of(item1, item2)).build();
 
         BigDecimal resultado = pedido.getValorTotal();
 
-        assertEquals(BigDecimal.ZERO, resultado);
+        assertEquals(new BigDecimal("0.00"), resultado);
     }
 }

@@ -1,28 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: br.com.avaliacao.domain.service.PedidoServiceTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 0.265 s <<< FAILURE! -- in br.com.avaliacao.domain.service.PedidoServiceTest
-br.com.avaliacao.domain.service.PedidoServiceTest.dadoProdutoInexistente_quandoAdicionarItem_entaoLancaExcecao -- Time elapsed: 0.002 s <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <Produto não encontrado> but was: <Pedido 1 não encontrado>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1145)
-	at br.com.avaliacao.domain.service.PedidoServiceTest.dadoProdutoInexistente_quandoAdicionarItem_entaoLancaExcecao(PedidoServiceTest.java:132)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-
-br.com.avaliacao.domain.service.PedidoServiceTest.dadoPedidoComCpfInvalido_quandoCriarPedido_entaoLancaExcecao -- Time elapsed: 0.001 s <<< ERROR!
-org.mockito.exceptions.base.MockitoException: 
-
-For br.com.avaliacao.support.util.CpfUtil, static mocking is already registered in the current thread
-
-To create a new mock, the existing static mock registration must be deregistered
-	at br.com.avaliacao.domain.service.PedidoServiceTest.dadoPedidoComCpfInvalido_quandoCriarPedido_entaoLancaExcecao(PedidoServiceTest.java:115)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
-
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.295 s -- in br.com.avaliacao.domain.service.PedidoServiceTest

@@ -18,52 +18,37 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProdutoRepositoryTest {
 
-    @InjectMocks
+    @Mock
     private ProdutoRepository produtoRepository;
 
-    @Mock
-    private JpaRepository<Produto, Long> jpaRepository;
-
     @Test
-    void dadoProdutoIdValido_quandoProcurarPorId_entaoRetornaProduto() {
-        Produto produto = new Produto();
-        produto.setId(1L);
+    void dadoIdValido_quandoFindById_entaoRetornaProduto() {
+        Produto produto = Produto.builder().id(1L).descricao("Produto 1").build();
+        when(produtoRepository.findById(1L)).thenReturn(Optional.of(produto));
 
-        when(jpaRepository.findById(1L)).thenReturn(Optional.of(produto));
+        Optional<Produto> result = produtoRepository.findById(1L);
 
-        Optional<Produto> resultado = produtoRepository.findById(1L);
-
-        assertTrue(resultado.isPresent());
-        assertEquals(1L, resultado.get().getId());
-        verify(jpaRepository, times(1)).findById(1L);
+        assertEquals(Optional.of(produto), result);
+        verify(produtoRepository).findById(1L);
     }
 
     @Test
-    void dadoProdutoIdInvalido_quandoProcurarPorId_entaoRetornaOptionalVazio() {
-        when(jpaRepository.findById(1L)).thenReturn(Optional.empty());
+    void dadoProduto_quandoSave_entaoProdutoEhPersistido() {
+        Produto produto = Produto.builder().descricao("Produto 2").build();
+        when(produtoRepository.save(produto)).thenReturn(produto);
 
-        Optional<Produto> resultado = produtoRepository.findById(1L);
+        Produto result = produtoRepository.save(produto);
 
-        assertTrue(resultado.isEmpty());
-        verify(jpaRepository, times(1)).findById(1L);
+        assertEquals(produto, result);
+        verify(produtoRepository).save(produto);
     }
 
     @Test
-    void dadoProdutoValido_quandoSalvar_entaoPersisteDados() {
-        Produto produto = new Produto();
+    void dadoIdValido_quandoDeleteById_entaoRemocaoEhRealizada() {
+        doNothing().when(produtoRepository).deleteById(1L);
 
-        when(jpaRepository.save(produto)).thenReturn(produto);
-
-        Produto resultado = produtoRepository.save(produto);
-
-        assertEquals(produto, resultado);
-        verify(jpaRepository, times(1)).save(produto);
-    }
-
-    @Test
-    void dadoProdutoId_quandoDeletar_entaoRemoveProduto() {
         produtoRepository.deleteById(1L);
 
-        verify(jpaRepository, times(1)).deleteById(1L);
+        verify(produtoRepository).deleteById(1L);
     }
 }

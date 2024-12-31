@@ -33,7 +33,7 @@ class OpenApiConfigTest {
         Info info = openAPI.getInfo();
         assertNotNull(info);
         assertEquals("Ambev API", info.getTitle());
-        assertEquals("Ambev API Demonstration", info.getDescription());
+        assertEquals("Ambev API Documentation", info.getDescription());
         assertEquals("v0.0.1", info.getVersion());
         
         License license = info.getLicense();

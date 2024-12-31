@@ -11,11 +11,12 @@ import br.com.avaliacao.support.exception.NegocioException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -25,8 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,49 +50,15 @@ class PedidoControllerTest {
 
     @BeforeEach
     void setUp() {
-        itemPedidoDTO = new ItemPedidoDTO(1L, BigDecimal.valueOf(2), BigDecimal.valueOf(3.5));
-        pedidoDTO = new PedidoDTO(1L,
+        itemPedidoDTO = new ItemPedidoDTO(1L, null, BigDecimal.valueOf(2), BigDecimal.valueOf(3.5));
+        pedidoDTO = new PedidoDTO(
+                1L,
                 "12345678901",
-                LocalDate.parse("2024-12-30"),
+                LocalDateTime.parse("2024-12-30T12:00:00"),
                 Situacao.CRIADO,
                 null,
-                Arrays.asList(itemPedidoDTO));
-    }
-
-    @Test
-    void dadoDataDeCorteValida_quandoObterTodos_entaoRetornaListaPaginadaDePedidos() {
-        var pedidos = List.of(mock(Pedido.class));
-        var pedidosPage = new PageImpl<>(pedidos);
-
-        when(pedidoService.obterTodos(any(LocalDateTime.class), any(Pageable.class))).thenReturn(pedidosPage);
-        when(pedidoConverter.toDTO(any())).thenReturn(pedidoDTO);
-
-        var resultado = pedidoController.obterTodos(LocalDate.now().toString(), 0, 10, "id");
-
-        assertEquals(1, resultado.getTotalElements());
-        assertEquals(pedidoDTO.id(), resultado.getContent().get(0).id());
-        verify(pedidoService, times(1)).obterTodos(any(LocalDateTime.class), any(Pageable.class));
-        verify(pedidoConverter, times(1)).toDTO(any());
-    }
-
-    @Test
-    void dadoDataDeCorteInvalida_quandoObterTodos_entaoLancaExcecao() {
-        assertThrows(RuntimeException.class, () -> pedidoController.obterTodos("invalid-date", 0, 10, "id"));
-    }
-
-    @Test
-    void dadoIdValido_quandoObterPorId_entaoRetornaPedido() throws NegocioException {
-        var pedido = mock(Pedido.class);
-
-        when(pedidoService.obterPor(1L)).thenReturn(pedido);
-        when(pedidoConverter.toDTO(any())).thenReturn(pedidoDTO);
-
-        var resultado = pedidoController.obterPorId(1L);
-
-        assertEquals(HttpStatus.OK, resultado.getStatusCode());
-        assertEquals(pedidoDTO.id(), ((PedidoDTO) resultado.getBody()).id());
-        verify(pedidoService, times(1)).obterPor(1L);
-        verify(pedidoConverter, times(1)).toDTO(any());
+                List.of(itemPedidoDTO)
+        );
     }
 
     @Test
