@@ -44,9 +44,14 @@ Este projeto implementa uma API REST para o gerenciamento de pedidos utilizando 
 
 5. **Banco de dados**:
     - **PostgreSQL** (com `docker-compose.yml`).
-    
-6. **OpenAPI e Swagger**:
+
+6. **Migrações de Banco de Dados com Flyway**:
+   - Este projeto utiliza o **Flyway** para gerenciar as migrações do banco de dados. O Flyway garante que as mudanças no esquema do banco de dados sejam versionadas, armazenadas e aplicadas de forma consistente, especialmente em ambientes distribuídos.
+   - Os arquivos de migração se encontram na pasta /resources/db/migration
+
+7. **OpenAPI e Swagger**:
     - Gerar documentação interativa dos endpoints.
+    - http://localhost:8081/order/swagger-ui/index.html
 
 ## **Guia de Configuração e Uso**
 ### **1. Requisitos do Ambiente**
@@ -72,7 +77,9 @@ Este projeto implementa uma API REST para o gerenciamento de pedidos utilizando 
    docker-compose up -d
 ```
 1. O comando acima permitirá:
-    - Inicializar o serviço do **PostgreSQL** (porta padrão: `5434`).
+    - Inicializar o serviço do **PostgreSQL** (porta padrão: `5434`)
+      - o banco de dados chamado order é criado automaticamente, juntamente com suas tabelas
+      - é realizado um insert de 10 produtos na tabela produto
     - Inicializar a instância do **Keycloak** (porta padrão: `9090`).
 
 ### **3. Configurando o Keycloak**
