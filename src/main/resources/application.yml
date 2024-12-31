@@ -11,11 +11,6 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
-#  profiles:
-#    active: prod
-#  main:
-#  lazy-initialization: true
-#    web-application-type: servlet
   jackson:
     property-naming-strategy: SNAKE_CASE
   datasource:
@@ -24,11 +19,11 @@ spring:
     password: 123456
     driver-class-name: org.postgresql.Driver
     hikari:
-      minimum-idle: 1                        # minimo de conexões abertas
-      maximum-pool-size: 10                  # maximo de conexões abertas
-      idle-timeout: 5                        # 5 minutos
-      connection-timeout: 30000                 # 30 segundos
-      leak-detection-threshold: 2            # 2 segundos
+      minimum-idle: 1
+      maximum-pool-size: 10
+      idle-timeout: 5
+      connection-timeout: 30000
+      leak-detection-threshold: 2
   jpa:
     hibernate:
       ddl-auto: none
@@ -68,8 +63,6 @@ springdoc:
     path: /swagger-ui.html
   show-actuator: true
 # SPRING DOC - END
-
-
 
 logging:
   level:
