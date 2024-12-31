@@ -38,7 +38,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9090/realms/avaliacao
+          issuer-uri: http://localhost:9090/realms/ambev
 
 # MANAGEMENT - DONT REMOVE
 management:

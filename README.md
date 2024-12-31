@@ -84,7 +84,7 @@ Após o Keycloak estar em execução:
         - **Password:** `123456`
 
 2. **Criar um Realm**:
-    - No painel, clique em "Add Realm" e crie um novo `Realm`, por exemplo, `pedidos`.
+    - No painel, clique em "Add Realm" e crie um novo `Realm`, com nome: `ambev`.
 
 3. **Criar um Cliente**:
     - Dentro do `Realm`, clique em "Clients" → "Create".
@@ -115,7 +115,7 @@ Após o Keycloak estar em execução:
 Para autenticar-se na API utilizando o Keycloak, siga os passos:
 1. Execute a seguinte requisição para obter o token:
 ``` bash
-   curl -X POST "http://localhost:9090/realms/pedidos/protocol/openid-connect/token" \
+   curl -X POST "http://localhost:9090/realms/ambev/protocol/openid-connect/token" \
      -H "Content-Type: application/x-www-form-urlencoded" \
      -d "client_id=cliente-externo-a" \
      -d "client_secret=<DIGITE_A_SECRET_DO_CLIENT>" \
