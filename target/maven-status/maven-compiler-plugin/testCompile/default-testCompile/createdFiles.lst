@@ -1,0 +1,11 @@
+br/com/avaliacao/controller/PedidoControllerTest.class
+br/com/avaliacao/domain/repository/ItemPedidoRepositoryTest.class
+br/com/avaliacao/support/util/CpfUtilTest.class
+br/com/avaliacao/config/OpenApiConfigTest.class
+br/com/avaliacao/domain/repository/ProdutoRepositoryTest.class
+br/com/avaliacao/domain/model/entity/ItemPedidoTest.class
+br/com/avaliacao/domain/model/entity/ProdutoTest.class
+br/com/avaliacao/domain/repository/PedidoRepositoryTest.class
+br/com/avaliacao/domain/model/entity/PedidoTest.class
+br/com/avaliacao/domain/service/PedidoServiceTest.class
+br/com/avaliacao/support/exception/NegocioExceptionTest.class

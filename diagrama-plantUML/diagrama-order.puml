@@ -1,0 +1,22 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' Definição dos elementos
+System_Boundary(orderSystem, "Order System") {
+    Container(orderApi, "Order API", "Java / Spring Boot", "API interna que gerencia os pedidos e integra sistemas externos.")
+    ContainerDb(orderDatabase, "Order Database", "PostgreSQL", "Banco de dados que armazena pedidos e informações relacionadas.")
+}
+
+System_Ext(systemA, "Sistema A", "Sistema externo que envia dados para a API.")
+System_Ext(systemB, "Sistema B", "Sistema externo que consulta dados da API.")
+System_Ext(keycloak, "Keycloak", "Sistema de autenticação e autorização.")
+
+' Relações entre os elementos
+Rel(systemA, keycloak, "Obtém token de acesso", "HTTPS")
+Rel(systemB, keycloak, "Obtém token de acesso", "HTTPS")
+Rel(systemA, orderApi, "Envia dados (com token)", "HTTPS")
+Rel(systemB, orderApi, "Consulta dados (com token)", "HTTPS")
+Rel(orderApi, orderDatabase, "Realiza operações de leitura e escrita", "JDBC")
+Rel(orderApi, keycloak, "Valida tokens de acesso", "HTTPS")
+
+@enduml

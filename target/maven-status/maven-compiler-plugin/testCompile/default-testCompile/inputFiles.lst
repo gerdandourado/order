@@ -1,0 +1,11 @@
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/config/OpenApiConfigTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/controller/PedidoControllerTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/domain/model/entity/ItemPedidoTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/domain/model/entity/PedidoTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/domain/model/entity/ProdutoTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/domain/repository/ItemPedidoRepositoryTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/domain/repository/PedidoRepositoryTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/domain/repository/ProdutoRepositoryTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/domain/service/PedidoServiceTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/support/exception/NegocioExceptionTest.java
+/home/gerdan/Documents/mentor/projetos/order/src/test/java/br/com/avaliacao/support/util/CpfUtilTest.java
