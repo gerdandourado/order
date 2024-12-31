@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,7 +22,7 @@ public class Pedido {
     private Long id;
     @Column(name = "cpf_cliente")
     private String cpfCliente;
-    private LocalDate data;
+    private LocalDateTime data;
     private Situacao situacao;
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens;

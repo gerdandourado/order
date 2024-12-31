@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class PedidoService {
@@ -29,7 +30,7 @@ public class PedidoService {
         this.produtoRepository = produtoRepository;
     }
 
-    public Page<Pedido> obterTodos(LocalDate dataDeCorte, Pageable pageable) {
+    public Page<Pedido> obterTodos(LocalDateTime dataDeCorte, Pageable pageable) {
         if(dataDeCorte == null) return pedidoRepository.findAll(pageable);
         return pedidoRepository.findAllByDataAfter(dataDeCorte, pageable);
     }

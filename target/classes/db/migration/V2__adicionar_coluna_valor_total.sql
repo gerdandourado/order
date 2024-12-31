@@ -1,3 +1,0 @@
-ALTER TABLE pedido
-    ADD COLUMN valor_total DECIMAL(18,2) DEFAULT 0.00;
-

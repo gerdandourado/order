@@ -1,7 +1,6 @@
-package br.com.avaliacao.controller;
+package br.com.avaliacao.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;

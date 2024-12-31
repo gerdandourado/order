@@ -1,6 +1,6 @@
 package br.com.avaliacao.support.convert;
 
-import br.com.avaliacao.controller.ItemPedidoDTO;
+import br.com.avaliacao.controller.dto.ItemPedidoDTO;
 import br.com.avaliacao.domain.model.entity.ItemPedido;
 import br.com.avaliacao.domain.model.entity.Produto;
 

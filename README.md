@@ -72,46 +72,54 @@ Este projeto implementa uma API REST para o gerenciamento de pedidos utilizando 
    docker-compose up -d
 ```
 1. O comando acima permitirá:
-    - Inicializar o serviço do **PostgreSQL** (porta padrão: `5432`).
-    - Inicializar a instância do **Keycloak** (porta padrão: `8081`).
+    - Inicializar o serviço do **PostgreSQL** (porta padrão: `5434`).
+    - Inicializar a instância do **Keycloak** (porta padrão: `9090`).
 
 ### **3. Configurando o Keycloak**
 Após o Keycloak estar em execução:
 1. **Acesse o painel de administração Keycloak**:
-    - URL: [http://localhost:8081]()
+    - URL: [http://localhost:9090]()
     - Credenciais padrão:
         - **Username:** `admin`
-        - **Password:** `admin`
+        - **Password:** `123456`
 
 2. **Criar um Realm**:
-    - No painel, clique em "Add Realm" e crie um novo `Realm`, por exemplo, `Pedidos`.
+    - No painel, clique em "Add Realm" e crie um novo `Realm`, por exemplo, `pedidos`.
 
 3. **Criar um Cliente**:
     - Dentro do `Realm`, clique em "Clients" → "Create".
     - Configure o cliente:
-        - `Client ID`: `pedidos-api`
-        - `Access Type`: `confidential`
+      - `Client ID`: `cliente-externo-a`
+      - `Access Type`: `confidential` ou `Client authentication`: `on`
+      - `Authentication flow`: selecione `Service accounts roles `
+      - Na aba `Credentials` é possível recuperar o `Client Secret`
+    - Configure outro cliente:
+      - `Client ID`: `cliente-externo-b`
+      - `Access Type`: `confidential` ou `Client authentication`: `on`
+      - `Authentication flow`: selecione `Service accounts roles `
+      - Na aba `Credentials` é possível recuperar o `Client Secret`
 
 4. **Criar Roles**:
     - Dentro do `Realm`, clique em "Roles" → "Add Role".
     - Adicione as roles conforme necessidade, por exemplo:
-        - `ROLE_CLIENTE_EXTERNO_UM`
-        - `ROLE_CLIENTE_EXTERNO_DOIS`
+        - `ROLE_CLIENTE_EXTERNO_A`
+        - `ROLE_CLIENTE_EXTERNO_B`        
 
-5. **Criação de Usuários** (opcional):
-    - No menu "Users", crie usuários que poderão acessar a API.
-    - Atribua as roles criadas ao usuário.
+5. **Associar Role ao client**
+    - No menu "Client", acesse a aba "Service account roles"
+    - Atribua as roles criadas aos clients
+    - A role `ROLE_CLIENTE_EXTERNO_A` abribuir ao client `cliente-externo-a`
+    - A role `ROLE_CLIENTE_EXTERNO_B` abribuir ao client `cliente-externo-b`
 
 ### **4. Obtendo o Token de Acesso**
 Para autenticar-se na API utilizando o Keycloak, siga os passos:
 1. Execute a seguinte requisição para obter o token:
 ``` bash
-   curl -X POST "http://localhost:8081/realms/Pedidos/protocol/openid-connect/token" \
+   curl -X POST "http://localhost:9090/realms/pedidos/protocol/openid-connect/token" \
      -H "Content-Type: application/x-www-form-urlencoded" \
-     -d "username=<SEU_USUARIO>" \
-     -d "password=<SUA_SENHA>" \
-     -d "client_id=pedidos-api" \
-     -d "grant_type=password"
+     -d "client_id=cliente-externo-a" \
+     -d "client_secret=<DIGITE_A_SECRET_DO_CLIENT>" \
+     -d "grant_type=client_credentials"
 ```
 1. No retorno, você receberá um JSON com o **access token**:
 ``` json
@@ -132,27 +140,123 @@ Para autenticar-se na API utilizando o Keycloak, siga os passos:
 1. A API estará disponível em: `http://localhost:8081`.
 
 ## **Exemplos de Chamadas REST à Classe PedidoController**
-### **1. Criar Pedido**:
-**POST:** `/pedidos`
-**Body:**
-``` json
-{
-  "cpfCliente": "12345678909",
-  "itens": [{"produtoId": 1, "quantidade": 2}]
-}
+### **1. `GET /pedidos` – Obter todos os pedidos**
+- **Descrição**: Recupera uma lista de pedidos, com paginação e filtragem por data.
+- **Autorização**: Necessita de um token válido com a role `ROLE_CLIENTE_EXTERNO_DOIS`.
+
+**Exemplo de Requisição com data de corte:**
+``` bash
+curl -X GET "http://localhost:8081/order/pedidos?data-de-corte=2024-12-31T09:00:00&page=0&size=10&sortBy=id" \
+     -H "Authorization: Bearer <TOKEN_JWT>"
 ```
-### **2. Obter Pedidos Paginados**:
-**GET:** `/pedidos?page=0&size=10`
-### **3. Obter Pedido por ID**:
-**GET:** `/pedidos/1`
-### **4. Adicionar Produto ao Pedido**:
-**POST:** `/pedidos/{id}/adicionarProduto`
-**Body:**
-``` json
-{
-  "produtoId": 2,
-  "quantidade": 1
-}
+**Exemplo de Requisição sem data de corte:**
+``` bash
+curl -X GET "http://localhost:8081/order/pedidos?page=0&size=10&sortBy=id" \
+     -H "Authorization: Bearer <TOKEN_JWT>"
 ```
-### **5. Cancelar Pedido**:
-**POST:** `/pedidos/{id}/cancelar`
+
+**Parâmetros:**
+- `data-de-corte` (opcional): Data no formato `yyyy-MM-ddTHH:mm:ss` para filtrar pedidos.
+- `page` (opcional): Índice da página.
+- `size` (opcional): Tamanho da página.
+- `sortBy` (opcional): Campo de ordenação.
+
+### **2. `GET /pedidos/{id}` – Obter pedido por ID**
+- **Descrição**: Recupera informações de um pedido específico.
+- **Autorização**: Necessita de um token válido com a role `ROLE_CLIENTE_EXTERNO_UM`.
+
+**Exemplo de Requisição:**
+``` bash
+curl -X GET "http://localhost:8081/order/pedidos/1" \
+     -H "Authorization: Bearer <TOKEN_JWT>"
+```
+- Substitua `123` pelo ID do pedido.
+
+### **3. `POST /pedidos` – Criar um novo pedido**
+- **Descrição**: Cria um pedido com seus itens.
+- **Autorização**: Necessita de um token válido com a role `ROLE_CLIENTE_EXTERNO_UM`.
+
+**Exemplo de Requisição:**
+``` bash
+curl -X POST "http://localhost:8081/order/pedidos" \
+     -H "Authorization: Bearer <TOKEN_JWT>" \
+     -H "Content-Type: application/json" \
+     -d '{
+            "id": 1,
+            "situacao": "CRIADO",
+            "cpf-cliente": "02769113348",
+            "data": "2024-12-31T12:00:00",
+            "itens": [
+               {
+                  "id-produto": 2,
+                  "quantidade": 2,
+                  "valor-unitario": 3.2
+               }
+            ]
+         }'
+```
+### **4. `POST /pedidos/{id}/adicionarProduto` – Adicionar produto ao pedido**
+- **Descrição**: Adiciona um produto existente a um pedido identificado pelo ID.
+- **Autorização**: Necessita de um token válido com a role `ROLE_CLIENTE_EXTERNO_UM`.
+
+**Exemplo de Requisição:**
+``` bash
+curl -X POST "http://localhost:8081/order/pedidos/123/adicionarProduto" \
+     -H "Authorization: Bearer <TOKEN_JWT>" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "id-produto": 1,
+           "quantidade": 3,
+           "valor-unitario": 3.5
+         }'
+```
+- Substitua `123` pelo ID do pedido.
+
+### **5. `POST /pedidos/{id}/removerProduto/{idProduto}` – Remover produto do pedido**
+- **Descrição**: Remove um produto específico de um pedido.
+- **Autorização**: Necessita de um token válido com a role `ROLE_CLIENTE_EXTERNO_UM`.
+
+**Exemplo de Requisição:**
+``` bash
+curl -X POST "http://localhost:8081/order/pedidos/123/removerProduto/101" \
+     -H "Authorization: Bearer <TOKEN_JWT>"
+```
+- Substitua `123` pelo ID do pedido e `101` pelo ID do produto a ser removido.
+
+### **6. `POST /pedidos/{id}/cancelar` – Cancelar pedido**
+- **Descrição**: Cancela um pedido, mudando seu status para "CANCELADO".
+- **Autorização**: Necessita de um token válido com a role `ROLE_CLIENTE_EXTERNO_UM`.
+
+**Exemplo de Requisição:**
+``` bash
+curl -X POST "http://localhost:8081/order/pedidos/123/cancelar" \
+     -H "Authorization: Bearer <TOKEN_JWT>"
+```
+- Substitua `123` pelo ID do pedido.
+
+### **7. `POST /pedidos/{id}/finalizar` – Finalizar pedido**
+- **Descrição**: Finaliza um pedido, mudando seu status para "FINALIZADO".
+- **Autorização**: Necessita de um token válido com a role `ROLE_CLIENTE_EXTERNO_UM`.
+
+**Exemplo de Requisição:**
+``` bash 
+curl -X POST "http://localhost:8081/order/pedidos/123/finalizar" \
+     -H "Authorization: Bearer <TOKEN_JWT>"
+```
+- Substitua `123` pelo ID do pedido.
+
+### Observações Importantes:
+1. **Autorização**:
+   - Utilize um token JWT válido no cabeçalho `Authorization: Bearer <TOKEN_JWT>` conforme as roles exigidas em cada método.
+
+2. **Corpo da requisição**:
+   - Para métodos `POST`, envie os dados no formato JSON.
+   - Certifique-se de validar os parâmetros exigidos (ex., IDs de pedidos ou produtos).
+
+3. **Códigos de retorno esperados**:
+   - `200 OK`: Operação bem-sucedida.
+   - `201 CREATED`: Pedido ou produto criado com sucesso.
+   - `403 FORBIDDEN`: Usuário não autorizado.
+   - `404 NOT FOUND`: Pedido ou produto não encontrado.
+   - `400 BAD REQUEST`: Dados inválidos.
+

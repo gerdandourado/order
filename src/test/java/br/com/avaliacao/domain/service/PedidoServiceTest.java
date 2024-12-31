@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +72,7 @@ public class PedidoServiceTest {
     @Test
     void dadoDataDeCorteValida_quandoObterTodos_entaoRetornaPedidosFiltrados() {
         Pageable pageable = Pageable.ofSize(10);
-        LocalDate dataDeCorte = LocalDate.now();
+        LocalDateTime dataDeCorte = LocalDateTime.now();
         Page<Pedido> pedidos = new PageImpl<>(List.of(new Pedido()));
 
         when(pedidoRepository.findAllByDataAfter(dataDeCorte, pageable)).thenReturn(pedidos);

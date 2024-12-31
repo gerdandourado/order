@@ -8,7 +8,7 @@
             <appender-ref ref="LOGFORMAT"/>
         </root>
     </springProfile>
-    <springProfile name="local, prod">
+    <springProfile name="default">
         <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

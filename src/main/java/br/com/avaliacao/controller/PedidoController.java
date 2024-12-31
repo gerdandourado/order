@@ -1,6 +1,8 @@
 
 package br.com.avaliacao.controller;
 
+import br.com.avaliacao.controller.dto.ItemPedidoDTO;
+import br.com.avaliacao.controller.dto.PedidoDTO;
 import br.com.avaliacao.domain.service.PedidoService;
 import br.com.avaliacao.support.convert.ItemPedidoConverter;
 import br.com.avaliacao.support.convert.PedidoConverter;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -33,9 +36,9 @@ public class PedidoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_DOIS')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_B')")
     @Operation(summary = "Recuperar uma lista de Pedidos", description = "Recuperar uma lista paginada de pedidos realizados. " +
-            "É possível filtrar os pedidos a partir de uma data de corte (yyyy-MM-dd) para evitar buscar todos os pedidos.")
+            "É possível filtrar os pedidos a partir de uma data de corte (yyyy-MM-ddTHH:mm:ss) para evitar buscar todos os pedidos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operação bem sucedida",
                     content = @Content(mediaType = "application/json",
@@ -47,22 +50,22 @@ public class PedidoController {
                                       @RequestParam(defaultValue = "id") String sortBy){
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
-        LocalDate localDate;
+        LocalDateTime localDateTime;
 
         try {
-            localDate = getLocalDate(dataDeCorte);
+            localDateTime = getLocalDateTime(dataDeCorte);
         } catch (Exception e) {
-            throw new RuntimeException("Formato da data inválido. O formato experado é: yyyy-MM-dd");
+            throw new RuntimeException("Formato da data inválido. O formato experado é: yyyy-MM-ddTHH:mm:ss");
         }
 
-        var pedidos = pedidoService.obterTodos(localDate, pageable).getContent().stream().map(pedidoConverter::toDTO).toList();
+        var pedidos = pedidoService.obterTodos(localDateTime, pageable).getContent().stream().map(pedidoConverter::toDTO).toList();
         return new PageImpl<>(pedidos, pageable, pedidos.size());
     }
 
-    private static LocalDate getLocalDate(String dataDeCorte) throws Exception{
+    private static LocalDateTime getLocalDateTime(String dataDeCorte) {
         return Optional.ofNullable(dataDeCorte)
                 .filter(date -> !date.isBlank())
-                .map(LocalDate::parse)
+                .map(LocalDateTime::parse)
                 .orElse(null);
     }
 
@@ -75,7 +78,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_UM')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> obterPorId(@PathVariable @NotNull(message = "ID é obrigatório") Long id){
         try {
             return ResponseEntity.ok(pedidoConverter.toDTO(pedidoService.obterPor(id)));
@@ -94,7 +97,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_UM')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> criarPedido(final @RequestBody @Valid PedidoDTO pedidoDTO){
         try {
             pedidoService.criarPedido(pedidoConverter.toEntity(pedidoDTO));
@@ -114,7 +117,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_UM')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> adicionarProduto(final @PathVariable @NotNull(message = "ID é obrigatório") Long id,
                                                  final @RequestBody @Valid ItemPedidoDTO itemPedidoDTO){
         try {
@@ -135,7 +138,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_UM')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> removerProduto(final @PathVariable @NotNull(message = "Id é obrigatório") Long id,
                                                final @PathVariable @NotNull(message = "Id Produto é obrigatório") Long idProduto){
         try {
@@ -156,7 +159,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_UM')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> cancelarPedido(final @PathVariable @NotNull(message = "ID é obrigatório") Long id){
         try {
             pedidoService.cancelar(id);
@@ -176,7 +179,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_UM')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> finalizarPedido(final @PathVariable @NotNull(message = "ID é obrigatório") Long id){
         try {
             pedidoService.finalizar(id);

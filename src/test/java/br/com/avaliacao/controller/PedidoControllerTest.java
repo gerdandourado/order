@@ -1,6 +1,7 @@
 package br.com.avaliacao.controller;
 
-import br.com.avaliacao.domain.model.entity.ItemPedido;
+import br.com.avaliacao.controller.dto.ItemPedidoDTO;
+import br.com.avaliacao.controller.dto.PedidoDTO;
 import br.com.avaliacao.domain.model.entity.Pedido;
 import br.com.avaliacao.domain.model.entity.Situacao;
 import br.com.avaliacao.domain.service.PedidoService;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,14 +64,14 @@ class PedidoControllerTest {
         var pedidos = List.of(mock(Pedido.class));
         var pedidosPage = new PageImpl<>(pedidos);
 
-        when(pedidoService.obterTodos(any(LocalDate.class), any(Pageable.class))).thenReturn(pedidosPage);
+        when(pedidoService.obterTodos(any(LocalDateTime.class), any(Pageable.class))).thenReturn(pedidosPage);
         when(pedidoConverter.toDTO(any())).thenReturn(pedidoDTO);
 
         var resultado = pedidoController.obterTodos(LocalDate.now().toString(), 0, 10, "id");
 
         assertEquals(1, resultado.getTotalElements());
         assertEquals(pedidoDTO.id(), resultado.getContent().get(0).id());
-        verify(pedidoService, times(1)).obterTodos(any(LocalDate.class), any(Pageable.class));
+        verify(pedidoService, times(1)).obterTodos(any(LocalDateTime.class), any(Pageable.class));
         verify(pedidoConverter, times(1)).toDTO(any());
     }
 

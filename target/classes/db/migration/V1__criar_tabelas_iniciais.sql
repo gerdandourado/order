@@ -6,7 +6,7 @@ CREATE TABLE produto (
 CREATE TABLE pedido (
                         id BIGINT PRIMARY KEY,
                         cpf_cliente VARCHAR(11) NOT NULL,
-                        data DATE NOT NULL,
+                        data timestamp NOT NULL,
                         situacao VARCHAR(50) NOT NULL
 );
 
