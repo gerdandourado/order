@@ -36,7 +36,7 @@ public class PedidoController {
     }
 
     @GetMapping
-//    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_B')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_B')")
     @Operation(summary = "Recuperar uma lista de Pedidos", description = "Recuperar uma lista paginada de pedidos realizados. " +
             "É possível filtrar os pedidos a partir de uma data de corte (yyyy-MM-ddTHH:mm:ss) para evitar buscar todos os pedidos.")
     @ApiResponses(value = {
@@ -78,7 +78,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-//    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> obterPorId(@PathVariable @NotNull(message = "ID é obrigatório") Long id){
         try {
             return ResponseEntity.ok(pedidoConverter.toDTO(pedidoService.obterPor(id)));
@@ -97,7 +97,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-//    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> criarPedido(final @RequestBody @Valid PedidoDTO pedidoDTO){
         try {
             pedidoService.criarPedido(pedidoConverter.toEntity(pedidoDTO));
@@ -117,7 +117,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-//    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> adicionarProduto(final @PathVariable @NotNull(message = "ID é obrigatório") Long id,
                                                  final @RequestBody @Valid ItemPedidoDTO itemPedidoDTO){
         try {
@@ -138,7 +138,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-//    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> removerProduto(final @PathVariable @NotNull(message = "Id é obrigatório") Long id,
                                                final @PathVariable @NotNull(message = "Id Produto é obrigatório") Long idProduto){
         try {
@@ -159,7 +159,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-//    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> cancelarPedido(final @PathVariable @NotNull(message = "ID é obrigatório") Long id){
         try {
             pedidoService.cancelar(id);
@@ -179,7 +179,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "403", description = "Requisição não autorizada"),
             @ApiResponse(responseCode = "404", description = "Dados não encontrados")
     })
-//    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
+    @PreAuthorize("hasRole('ROLE_CLIENTE_EXTERNO_A')")
     public ResponseEntity<Object> finalizarPedido(final @PathVariable @NotNull(message = "ID é obrigatório") Long id){
         try {
             pedidoService.finalizar(id);
